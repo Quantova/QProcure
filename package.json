@@ -1,0 +1,61 @@
+{
+  "name": "@quantovainc/qprocure",
+  "version": "0.1.0",
+  "description": "Post quantum procurement integrity for governments. Seals tender notices, sealed bid commitments, openings, evaluation scores, awards and contract amendments with ML-DSA-65 under FIPS 204 and Quantova time proofs, so a late or replaced bid, an altered score or an unsupported award is detected.",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "qprocure": "bin/qprocure.js"
+  },
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "lib/",
+    "bin/",
+    "wasm/qprocure_native.js",
+    "wasm/qprocure_native_bg.wasm",
+    "wasm/qprocure_native.d.ts",
+    "LICENSE-APACHE",
+    "LICENSE-MIT",
+    "NOTICE",
+    "AUTHORS"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@quantovainc/qstamp": "0.1.5"
+  },
+  "keywords": [
+    "post-quantum",
+    "quantum-safe",
+    "procurement",
+    "tender",
+    "public-contracts",
+    "anti-corruption",
+    "government",
+    "ml-dsa",
+    "fips-204",
+    "quantova"
+  ],
+  "license": "Apache-2.0 OR MIT",
+  "author": "Quantova Inc",
+  "homepage": "https://github.com/Quantova/QProcure",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Quantova/QProcure.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Quantova/QProcure/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
