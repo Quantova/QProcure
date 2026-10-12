@@ -16,8 +16,8 @@ QProcure is standalone. It runs on the systems of its users, holds keys locally 
 
 1. A record altered, replaced, inserted or backdated after it was sealed.
 2. A bid sealed after the deadline, or a bid whose anchor is later than the deadline.
-3. An opened bid or price that differs from the commitment its bidder sealed, or a bid opened before the deadline had passed.
-4. A bid sealed before the deadline that was never opened, once the bids held for the tender are supplied.
+3. An opened bid or price that differs from the commitment its bidder sealed, a seal reused by another bidder, a bid opened more than once, or a bid opened before the deadline had passed.
+4. A bid proven to be sealed before the deadline that was neither opened nor excluded by a signed decision of the committee, once the bids held for the tender are supplied.
 5. Award criteria changed after the notice was sealed, when the criteria document is supplied.
 6. A score above the largest score of the notice, an evaluator who did not score every opened bid or signed two scores for one bid, or a score signed or anchored after the award.
 7. An award that does not follow the highest total of the signed scores, a second award for the same tender, or an award whose value differs from the opened price of the winning bid.
@@ -36,9 +36,9 @@ QProcure is standalone. It runs on the systems of its users, holds keys locally 
 
 2. Seal the notice. The authority calls notice with the title, the fingerprint of the criteria document, the currency, the estimate, the largest score and the deadline before the notice is published.
 
-3. Seal bids. Each bidder runs seal-bid, or calls sealBid, on its own systems with the bid document and its price, keeps the bid, the price and the salt secret until the opening, and calls bid with the seal against the notice before the deadline.
+3. Seal and anchor bids. Each bidder runs seal-bid, or calls sealBid, on its own systems with the bid document, its price, the notice and its own key, keeps the bid, the price and the salt secret until the opening, calls bid with the seal against the notice and anchors the bid itself with its own funded account before the deadline, keeping the receipt. A bid anchored by the bidder cannot be suppressed by the authority.
 
-4. Open and evaluate. After the deadline the committee calls opening for each bid with the bid fingerprint, the salt and the price. Each evaluator calls score for every opened bid.
+4. Open, exclude and evaluate. After the deadline the committee calls opening for each bid with the bid fingerprint, the salt and the price. A bid that cannot be opened, because its bidder withdrew or did not reveal it, or that is not compliant, is excluded with exclusion, stating the reason. Each evaluator calls score for every opened bid.
 
 5. Award and amend. The award authority calls award against the notice and the winning opening, with the fingerprint of the contract. Each later change is sealed by an approver with amendment, naming the previous amendment of the award or declaring it the first.
 
@@ -66,7 +66,7 @@ When a record is anchored, only a 32 byte Qstamp commitment reaches the chain. I
 
 6. Series. The amendments of one award form a series. Every record of a series carries its position from one and the reference of the previous record of the series, which is empty only for the first.
 
-7. Bid seals. A bid seal is the SHA3-256 hash of the ASCII label quantova/qprocure/seal/1, the byte 0x00, a random 32 byte salt, the SHA3-256 fingerprint of the bid document and the price in ASCII. The opening record reveals the fingerprint, the salt and the price, so any verifier can recompute the seal.
+7. Bid seals. A bid seal is the SHA3-256 hash of the ASCII label quantova/qprocure/seal/1 and the byte 0x00, followed by five length prefixed parts, a random 32 byte salt, the SHA3-256 fingerprint of the bid document, the reference of the notice, the key identifier of the bidder and the price in ASCII. Binding the notice and the bidder means a seal cannot be reused by another bidder or in another tender. The opening record reveals the fingerprint, the salt and the price, so any verifier can recompute the seal.
 
 8. Anchor. To anchor a record, QProcure stamps the SHA3 hash of the label quantova/qprocure/anchor/1, the byte 0x00, the encoded statement and its signature as a Qstamp record of kind 1103.
 
@@ -77,6 +77,7 @@ When a record is anchored, only a 32 byte Qstamp commitment reaches the chain. I
 | notice | contracting authority key | none | none |
 | bid | registered bidder key | notice | none |
 | opening | opening committee key | notice, bid | none |
+| exclusion | opening committee key | notice, bid | none |
 | score | evaluator key | notice, opening | none |
 | award | award authority key | notice, opening | none |
 | amendment | amendment approver key | award | per award |
@@ -94,7 +95,7 @@ When a record is anchored, only a 32 byte Qstamp commitment reaches the chain. I
 9. A bid is sealed no later than the deadline of its notice, and its anchor, when present, is no later than the deadline. When anchors are required an unanchored bid is not proven timely.
 10. An opening is dated after the deadline and its bid fingerprint, salt and price reproduce the seal of the bid.
 11. A score does not exceed the largest score of its notice.
-12. An award relies on an opening of the same notice and its value is the opened price. Every bid, opening, score and award of the tender supplied and signed by trusted keys is verified in turn. Among them, every bid sealed before the deadline was opened, every evaluator scored every opened bid, every score counted was signed and anchored before the award, no other award exists for the tender, and the opening awarded holds the highest total score. An award is valid only when the verifier declares that every bid, opening and score held for the tender was supplied.
+12. An award relies on an opening of the same notice and its value is the opened price. Every opening, exclusion, score and award of the tender supplied and signed by trusted keys is verified in turn. Among them, no bid was opened twice or both opened and excluded, every exclusion is dated after the deadline, every evaluator scored every opened bid, every score counted was signed and anchored before the award, no other award exists for the tender, and the opening awarded holds the highest total score. Every bid that was neither opened nor excluded is checked separately. Such a bid that is valid and proven to be sealed and anchored before the deadline makes the award invalid, such a bid that is valid and stated before the deadline but not anchored makes the result indeterminate, and a late or invalid bid is reported as left out. An award is valid only when the verifier declares that every bid, opening, exclusion and score held for the tender was supplied.
 13. When documents are supplied, their fingerprints match the signed fingerprints, and when a party identity and salt are supplied, they match the commitment.
 14. Each anchor is verified under the QProcure record kind with a SHA3 digest, and the stated time is not later than the anchor time, allowing five minutes. An anchor more than twenty four hours after the stated time, unless another limit is given, or later than a given verification time, does not prove the stated time and makes the result indeterminate.
 
@@ -131,7 +132,7 @@ qprocure keygen approver.key
 qprocure key approver.key > approver.pub.json
 
 qprocure notice --key authority.key --title "Bridge repair" --criteria criteria.pdf --currency EUR --estimate 5000000 --max-score 100 --deadline <deadline> --out notice.json
-qprocure seal-bid --bid bid.pdf --price 4000000 --out bid.seal.json
+qprocure seal-bid --bid bid.pdf --price 4000000 --notice notice.json --bidder bidder.pub.json --out bid.seal.json
 qprocure bid --key bidder.key --notice notice.json --seal <seal> --out bid.json
 
 # after the deadline has passed

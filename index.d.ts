@@ -1,7 +1,7 @@
 // Copyright 2026 Quantova Inc
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
-export type RecordType = 'notice' | 'bid' | 'opening' | 'score' | 'award' | 'amendment';
+export type RecordType = 'notice' | 'bid' | 'opening' | 'exclusion' | 'score' | 'award' | 'amendment';
 export type Role = 'authority' | 'bidder' | 'committee' | 'evaluator' | 'awarder' | 'approver';
 
 export interface Envelope {
@@ -54,6 +54,15 @@ export interface OpeningOptions {
   currency?: string;
   price: string;
   openedAt?: string;
+  note?: string;
+}
+
+export interface ExclusionOptions {
+  key: Uint8Array;
+  notice: Envelope;
+  bid: Envelope;
+  reason: string;
+  excludedAt?: string;
   note?: string;
 }
 
@@ -156,6 +165,7 @@ export function commitParty(identity: string): { salt: Uint8Array; ref: string }
 export function notice(options: NoticeOptions): Envelope;
 export function bid(options: BidOptions): Envelope;
 export function opening(options: OpeningOptions): Envelope;
+export function exclusion(options: ExclusionOptions): Envelope;
 export function score(options: ScoreOptions): Envelope;
 export function award(options: AwardOptions): Envelope;
 export function amendment(options: AmendmentOptions): Envelope;
@@ -165,7 +175,7 @@ export function complete(envelopes: Envelope | Envelope[], pending: unknown, opt
 export function verify(envelope: unknown, options: VerifyOptions): Promise<VerifyResult>;
 export function refOf(envelope: Envelope): string;
 export function anchorDigest(envelope: Envelope): string;
-export function sealBid(bid: Uint8Array, price: string): { salt: string; bidDigest: string; price: string; seal: string };
+export function sealBid(bid: Uint8Array, price: string, notice: Envelope, bidder: KeyRef): { salt: string; bidDigest: string; price: string; seal: string };
 export const FORMAT: 'qprocure/1';
 export const ALGORITHM: 'ML-DSA-65';
 export const KIND: 1103;
