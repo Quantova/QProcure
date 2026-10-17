@@ -20,7 +20,7 @@ QProcure is standalone. It runs on the systems of its users, holds keys locally 
 4. A bid proven to be sealed before the deadline that was neither opened nor excluded by a signed decision of the committee, once the bids held for the tender are supplied.
 5. Award criteria changed after the notice was sealed, when the criteria document is supplied.
 6. A score above the largest score of the notice, an evaluator who did not score every opened bid or signed two scores for one bid, or a score signed or anchored after the award.
-7. An award that does not follow the highest total of the signed scores, a second award for the same tender, or an award whose value differs from the opened price of the winning bid.
+7. An award that does not follow the highest total of the signed scores, a second award for the same tender, an award whose value differs from the opened price of the winning bid, or a tender in which one registered bidder sealed more than one bid.
 8. An amendment without a sealed approval, an amendment removed from the series, or two different amendments in the same position.
 9. A record signed by a key that is not trusted for its role, or two linked records signed by the same key.
 
