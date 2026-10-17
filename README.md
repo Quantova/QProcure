@@ -56,7 +56,7 @@ When a record is anchored, only a 32 byte Qstamp commitment reaches the chain. I
 
 1. Keys. Keys are 32 byte seeds from which ML-DSA-65 key pairs are derived by the key generation procedure of FIPS 204. A key identifier is the SHA3 hash with a 256 bit output of the ASCII label quantova/qprocure/key/1, the byte 0x00 and the 1952 byte public key.
 
-2. Party commitments. A party is named by the SHA3-256 hash of the ASCII label quantova/qprocure/party/1, the byte 0x00, a random 32 byte salt and the identifier in Unicode normal form C.
+2. Party commitments. A party is named by the SHA3-256 hash of the ASCII label quantova/qprocure/party/1, the byte 0x00, a random 32 byte salt and the identifier in Unicode normal form C. When the authority supplies its own 32 byte secret and the reference of the record that defines the series, the salt is instead the SHA3-256 hash of the ASCII label quantova/qprocure/party-salt/1, the byte 0x00, the secret, the 32 byte reference and the identifier in Unicode normal form C, so the same party always receives the same commitment in that series.
 
 3. Statements. Each statement is a canonical binary encoding that begins with the ASCII bytes QPRC and the version byte 1, followed by the statement type and its fields in a fixed order. Every field is an unsigned 16 bit big endian length followed by its bytes. Identifiers, key identifiers, references and digests are encoded as raw bytes, an absent reference is an empty field, sequence numbers and sizes are unsigned 64 bit big endian integers, and text is UTF-8 in Unicode normal form C, so every statement has exactly one encoding. Amounts are whole numbers of minor units with no leading zeros, and a currency is three capital letters, which QProcure checks for form only, so the integrating system should use ISO 4217 codes.
 
@@ -103,7 +103,7 @@ A result is valid only when the trusted keys are given, every record relied on i
 
 ## Trust model of this release
 
-This release targets the Quantova test network. Anchors on that network carry no evidential weight. The signing module is compiled from the Quantova Q-Crypto library, which follows FIPS 204 and FIPS 202 and has been tested against the NIST vectors, but has not yet been independently audited or validated under FIPS 140-3.
+This release anchors on the live Quantova network Q-test-net-1. The signing module is compiled from the Quantova Q-Crypto library, which follows FIPS 204 and FIPS 202 and has been tested against the NIST vectors. It has not been validated under FIPS 140-3. Anchor times are confirmed by the endpoints a verifier queries, so a time is only as reliable as those endpoints. Verification names the endpoints it consulted and says whether they are the official endpoints of the network, and a verifier who needs independence from any single operator should query several independent endpoints.
 
 A sealed record proves who signed it, what was signed and when it was anchored. Each check is made from the records a verifier is given, so two records in the same position of a series are detected only when both are supplied, and auditors should obtain every record held for the series they examine. A party commitment is the same in every record that uses the same salt, so records about one party can be linked by anyone who sees them, and anyone who obtains the salt can test guesses of the identifier, so salts must be protected like the identifiers themselves. Verifiers must keep the keys of retired officials in the trusted lists for as long as records they signed are verified. A sealed record does not detect collusion agreed between bidders outside the procedure, and it does not judge whether criteria or scores were reasonable, which remain matters for review bodies and competition authorities. Amendments are not limited in value by QProcure, so each must be justified by its sealed approval.
 
@@ -162,7 +162,7 @@ The command exits with status 0 when the result is valid, 1 when it is invalid, 
 
 ## Network
 
-The Quantova test network is named Q-test-net-1 with genesis hash ca91e093bb8de33e90db52d7c89876597d14760703793ea7211929e73e613062. Anchors are recorded by the official Qstamp contract on that network. The public endpoint is https://rpc-testnet.quantova.org.
+The live Quantova network is named Q-test-net-1 with genesis hash ca91e093bb8de33e90db52d7c89876597d14760703793ea7211929e73e613062. Anchors are recorded by the official Qstamp contract on that network. The public endpoint is https://rpc-testnet.quantova.org.
 
 ## Licence
 
