@@ -155,7 +155,7 @@ The network has one official endpoint today, so the anchor and verify commands a
 
 The opening, score and award commands are run after the deadline of the notice has passed.
 
-Every command that signs a record of a series takes --ledger with the folder shared by every signer of the series, as in the example above. Without --ledger it signs nothing and exits with status 64, unless --no-ledger declares that the integrating system serialises the series itself.
+Every command that signs a record of a series takes --ledger with the folder shared by every signer of the series, as in the example above. The ledger folder records every position already signed, so keep it on storage that only the signing service can write to, never edit or delete a file in it, and back it up as a whole, because a folder that is rolled back or loses a file lets a position be signed a second time. Without --ledger it signs nothing and exits with status 64, unless --no-ledger declares that the integrating system serialises the series itself.
 
 If anchoring is interrupted after its transaction may have been sent, a pending stamp is kept beside each envelope and the envelopes are not anchored again. Finish with qprocure complete, giving the same envelopes in the same order and the pending stamp.
 
