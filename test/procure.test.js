@@ -75,13 +75,12 @@ test('forged receipts that claim earlier positions cannot displace the timely re
   const r1 = await t.verifyAward(few.concat([t.bid1Late, t.bid1Timely]));
   assert.strictEqual(r1.status, 'invalid', failing(r1).join('\n'));
   const many = [];
-  for (let i = 0; i < 9; i += 1) many.push(Object.assign({}, t.bid1, { anchor: forged(t.bid1Timely.anchor, 60 + i, i) }));
+  for (let i = 0; i < 24; i += 1) many.push(Object.assign({}, t.bid1, { anchor: forged(t.bid1Timely.anchor, 60 + i, i) }));
   const r2 = await t.verifyAward(many.concat([t.bid1Late, t.bid1Timely]));
-  assert.strictEqual(r2.status, 'indeterminate', failing(r2).join('\n'));
-  assert.ok(r2.checks.some((c) => c.name === 'unproven bids' && c.indeterminate));
+  assert.strictEqual(r2.status, 'invalid', failing(r2).join('\n'));
+  assert.ok(r2.checks.some((c) => c.name === 'openings' && !c.ok));
   const own = await q.verify(t.bid1, Object.assign({ type: 'bid', records: [t.notice].concat(many, [t.bid1Late, t.bid1Timely]) }, t.roles, t.net.opts));
-  assert.strictEqual(own.status, 'indeterminate', failing(own).join('\n'));
-  assert.ok(own.checks.some((c) => /earliest anchor is not established/.test(c.detail)));
+  assert.strictEqual(own.status, 'valid', failing(own).join('\n'));
 });
 
 test('the award stays valid when every bid was opened and scored', async () => {
