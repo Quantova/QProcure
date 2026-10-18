@@ -14,6 +14,11 @@ export interface Envelope {
   anchor?: unknown;
 }
 
+export interface SeriesLedger {
+  read(name: string): Promise<string | null>;
+  compareAndSwap(name: string, expected: string | null, next: string): Promise<boolean>;
+}
+
 export interface KeyDescription {
   format: 'qprocure-key/1';
   algorithm: 'ML-DSA-65';
@@ -83,6 +88,7 @@ export interface AwardOptions {
   contractDocument?: Uint8Array;
   currency?: string;
   value?: string;
+  ledger?: string | SeriesLedger;
   awardedAt?: string;
   note?: string;
 }
@@ -96,6 +102,7 @@ export interface AmendmentOptions {
   value: string;
   previous?: Envelope;
   first?: boolean;
+  ledger?: string | SeriesLedger;
   amendedAt?: string;
   note?: string;
 }
@@ -186,9 +193,13 @@ export function bid(options: BidOptions): Envelope;
 export function opening(options: OpeningOptions): Envelope;
 export function exclusion(options: ExclusionOptions): Envelope;
 export function score(options: ScoreOptions): Envelope;
+export function award(options: AwardOptions & { ledger: string | SeriesLedger }): Promise<Envelope>;
 export function award(options: AwardOptions): Envelope;
+export function amendment(options: AmendmentOptions & { ledger: string | SeriesLedger }): Promise<Envelope>;
 export function amendment(options: AmendmentOptions): Envelope;
-export function create(type: RecordType, options: Record<string, unknown>): Envelope;
+export function create(type: RecordType, options: Record<string, unknown>): Envelope | Promise<Envelope>;
+export function folderLedger(folder: string): SeriesLedger;
+export function ledgerLatest(ledger: string | SeriesLedger, type: RecordType, seriesRef: string): Promise<Envelope | null>;
 export function anchor(envelopes: Envelope | Envelope[], options: AnchorOptions): Promise<Envelope[]>;
 export function complete(envelopes: Envelope | Envelope[], pending: unknown, options?: { rpc?: string | string[]; client?: unknown; clients?: Array<string | unknown>; trustSingleEndpoint?: boolean; allowLoopback?: boolean; endpointAllowList?: string[]; timeoutMs?: number }): Promise<Envelope[]>;
 export function verify(envelope: unknown, options: VerifyOptions): Promise<VerifyResult>;
