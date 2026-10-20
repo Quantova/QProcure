@@ -1,6 +1,6 @@
 {
   "name": "@quantovainc/qprocure",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Post quantum procurement integrity for governments. Seals tender notices, sealed bid commitments, openings, evaluation scores, awards and contract amendments with ML-DSA-65 under FIPS 204 and Quantova time proofs, so a late or replaced bid, an altered score or an unsupported award is detected.",
   "main": "index.js",
   "types": "index.d.ts",
@@ -34,8 +34,12 @@
   "engines": {
     "node": ">=20"
   },
+  "os": [
+    "darwin",
+    "linux"
+  ],
   "dependencies": {
-    "@quantovainc/qstamp": "0.3.0"
+    "@quantovainc/qstamp": "0.4.0"
   },
   "keywords": [
     "post-quantum",
