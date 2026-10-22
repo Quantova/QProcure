@@ -152,11 +152,11 @@ qprocure opening --key committee.key --notice notice.json --bid bid.json --bid-d
 qprocure score --key evaluator.key --notice notice.json --opening opening.json --score 80 --out score.json
 mkdir ledger
 qprocure award --key awarder.key --notice notice.json --opening opening.json --contract-document contract.pdf --ledger ledger --out award.json
-qprocure anchor notice.json bid.json --seed-file account.key --trust-single-endpoint
+qprocure anchor notice.json bid.json --network testnet --seed-file account.key --trust-single-endpoint
 
-qprocure anchor opening.json score.json award.json --seed-file account.key --trust-single-endpoint
+qprocure anchor opening.json score.json award.json --network testnet --seed-file account.key --trust-single-endpoint
 
-qprocure verify award.json --type award --authority authority.pub.json --bidder bidder.pub.json --committee committee.pub.json --evaluator evaluator.pub.json --awarder awarder.pub.json --approver approver.pub.json --record notice.json --record bid.json --record opening.json --record score.json --all-supplied --trust-single-endpoint
+qprocure verify award.json --type award --network testnet --authority authority.pub.json --bidder bidder.pub.json --committee committee.pub.json --evaluator evaluator.pub.json --awarder awarder.pub.json --approver approver.pub.json --record notice.json --record bid.json --record opening.json --record score.json --all-supplied --trust-single-endpoint
 ```
 
 The file account.key holds the 32 byte seed of a funded Quantova account, as 64 hexadecimal characters, which pays for anchoring. It is separate from the signing keys of officials.
@@ -181,7 +181,7 @@ The command exits with status 0 when the result is valid, 1 when it is invalid, 
 
 ## Network
 
-The live Quantova network is named Q-test-net-01. Its genesis hash and the official Qstamp contract that records anchors are pinned in the Qstamp release this SDK depends on. The public endpoint is https://q-test-net-01.quantova.org. By default verification consults the official endpoints of the network. Endpoints chosen by the verifier are given with the rpc or clients option, or with --rpc once for each on the command line, and verification consults them only with trustCustomEndpoints, or --trust-custom-endpoints. An endpoint on a loopback address is refused unless allowLoopback, or --allow-loopback, is set, and an endpoint on a private network address unless it is named in endpointAllowList, or with --allow-endpoint. The option expectedSender, or --expect-sender, names the Quantova accounts entitled to anchor records, and an anchor signed by any other account is invalid. Anchoring accepts chain data only when at least two endpoints run by different operators agree, and the option trustSingleEndpoint, or --trust-single-endpoint, relies on one endpoint for anchoring and for the time of the chain.
+The live Quantova network is named Q-test-net-01. Its genesis hash and the official Qstamp contract that records anchors are pinned in the Qstamp release this SDK depends on. The public endpoint is https://q-test-net-01.quantova.org. By default verification consults the official endpoints of the network. Every verification names the network its records were anchored on with the network option, or --network on the command line, testnet for the public network or custom for a chain reached only through endpoints the verifier chose, and an anchor recorded on any other network fails. Endpoints chosen by the verifier are given with the rpc or clients option, or with --rpc once for each on the command line, and verification consults them only with trustCustomEndpoints, or --trust-custom-endpoints. An endpoint on a loopback address is refused unless allowLoopback, or --allow-loopback, is set, and an endpoint on a private network address unless it is named in endpointAllowList, or with --allow-endpoint. The option expectedSender, or --expect-sender, names the Quantova accounts entitled to anchor records, and an anchor signed by any other account is invalid. Anchoring accepts chain data only when at least two endpoints run by different operators agree, and the option trustSingleEndpoint, or --trust-single-endpoint, relies on one endpoint for anchoring and for the time of the chain.
 
 ## Licence
 
