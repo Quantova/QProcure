@@ -39,6 +39,7 @@ export interface NoticeOptions {
   deadline: string;
   publishedAt?: string;
   note?: string;
+  clock?: { chainMs: number };
 }
 
 export interface BidOptions {
@@ -47,6 +48,7 @@ export interface BidOptions {
   seal: string;
   sealedAt?: string;
   note?: string;
+  clock?: { chainMs: number };
 }
 
 export interface OpeningOptions {
@@ -60,6 +62,7 @@ export interface OpeningOptions {
   price: string;
   openedAt?: string;
   note?: string;
+  clock?: { chainMs: number };
 }
 
 export interface ExclusionOptions {
@@ -69,6 +72,7 @@ export interface ExclusionOptions {
   reason: string;
   excludedAt?: string;
   note?: string;
+  clock?: { chainMs: number };
 }
 
 export interface ScoreOptions {
@@ -78,6 +82,7 @@ export interface ScoreOptions {
   score: string;
   scoredAt?: string;
   note?: string;
+  clock?: { chainMs: number };
 }
 
 export interface AwardOptions {
@@ -91,6 +96,7 @@ export interface AwardOptions {
   ledger: string | SeriesLedger | false;
   awardedAt?: string;
   note?: string;
+  clock?: { chainMs: number };
 }
 
 export interface AmendmentOptions {
@@ -105,6 +111,7 @@ export interface AmendmentOptions {
   ledger: string | SeriesLedger | false;
   amendedAt?: string;
   note?: string;
+  clock?: { chainMs: number };
 }
 
 export type KeyStatus = { revoked: false } | { revoked: true; revokedAt: number };
