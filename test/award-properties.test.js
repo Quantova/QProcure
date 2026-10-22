@@ -57,7 +57,7 @@ async function tender(rng) {
     records.push(o);
   }
   for (let i = 0; i < openings.length; i += 1) records.push(await at(q.score({ key: K.evaluator, notice, opening: openings[i], score: String(i === 0 ? 90 : 10 + int(70)), scoredAt: iso(deadline + 4000 + i) }), deadline + 4100));
-  const award = await at(q.award({ key: K.awarder, notice, opening: openings[0], contractDocument: Buffer.from('contract'), currency: 'EUR', awardedAt: iso(deadline + 4500) }), deadline + 4600);
+  const award = await at(q.award({ ledger: false, key: K.awarder, notice, opening: openings[0], contractDocument: Buffer.from('contract'), currency: 'EUR', awardedAt: iso(deadline + 4500) }), deadline + 4600);
   const late = await at(unanchored[suppressed], deadline + 600 + int(3000));
   net.chain.block(now);
   const roles = {

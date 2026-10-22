@@ -34,7 +34,7 @@ test('anchors of a suppressed bid that the chain cannot answer never hide that i
   const bidB = await at(q.bid({ key: K.bidderB, notice, seal: sealB.seal, sealedAt: iso(now - 3900) }), now - 3890);
   const openB = await at(q.opening({ key: K.committee, notice, bid: bidB, bidSalt: sealB.salt, bidDigest: sealB.bidDigest, price: '950', openedAt: iso(now - 2000) }), now - 1990);
   const scoreB = await at(q.score({ key: K.evaluator, notice, opening: openB, score: '80', scoredAt: iso(now - 1500) }), now - 1490);
-  const award = await at(q.award({ key: K.awarder, notice, opening: openB, contractDocument: Buffer.from('k'), awardedAt: iso(now - 1000) }), now - 990);
+  const award = await at(q.award({ ledger: false, key: K.awarder, notice, opening: openB, contractDocument: Buffer.from('k'), awardedAt: iso(now - 1000) }), now - 990);
   net.chain.block(now);
   const roles = { authorityKeys: [q.keyId(K.authority)], bidderKeys: [q.keyId(K.bidderA), q.keyId(K.bidderB)], committeeKeys: [q.keyId(K.committee)], evaluatorKeys: [q.keyId(K.evaluator)], awarderKeys: [q.keyId(K.awarder)] };
   const run = (records) => q.verify(award, Object.assign({ type: 'award', at: iso(now), allSupplied: true, records }, roles, net.opts));

@@ -22,7 +22,7 @@ function tender() {
   };
   const open = (x, m) => q.opening({ key: committee, notice, bid: x.bid, bidDigest: x.s.bidDigest, bidSalt: x.s.salt, currency: 'EUR', price: x.s.price, openedAt: t(m) });
   const score = (o, value, m) => q.score({ key: evaluator, notice, opening: o, score: value, scoredAt: t(m) });
-  const award = (o) => q.award({ key: awarder, notice, opening: o, contractDigest: 'c'.repeat(64), currency: 'EUR', awardedAt: t(100) });
+  const award = (o) => q.award({ ledger: false, key: awarder, notice, opening: o, contractDigest: 'c'.repeat(64), currency: 'EUR', awardedAt: t(100) });
   const roles = { authorityKeys: [id(auth)], bidderKeys: [id(bidder), id(rival)], committeeKeys: [id(committee)], evaluatorKeys: [id(evaluator)], awarderKeys: [id(awarder)] };
   const verify = (env, records, extra) => q.verify(env, Object.assign({ type: 'award', requireAnchor: false, allSupplied: true, at: new Date().toISOString(), records: [notice].concat(records) }, roles, net.opts, extra || {}));
   return { committee, notice, bidder, rival, sealed, open, score, award, verify, t };

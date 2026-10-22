@@ -88,7 +88,7 @@ export interface AwardOptions {
   contractDocument?: Uint8Array;
   currency?: string;
   value?: string;
-  ledger?: string | SeriesLedger;
+  ledger: string | SeriesLedger | false;
   awardedAt?: string;
   note?: string;
 }
@@ -102,7 +102,7 @@ export interface AmendmentOptions {
   value: string;
   previous?: Envelope;
   first?: boolean;
-  ledger?: string | SeriesLedger;
+  ledger: string | SeriesLedger | false;
   amendedAt?: string;
   note?: string;
 }
@@ -194,9 +194,9 @@ export function opening(options: OpeningOptions): Envelope;
 export function exclusion(options: ExclusionOptions): Envelope;
 export function score(options: ScoreOptions): Envelope;
 export function award(options: AwardOptions & { ledger: string | SeriesLedger }): Promise<Envelope>;
-export function award(options: AwardOptions): Envelope;
+export function award(options: AwardOptions & { ledger: false }): Envelope;
 export function amendment(options: AmendmentOptions & { ledger: string | SeriesLedger }): Promise<Envelope>;
-export function amendment(options: AmendmentOptions): Envelope;
+export function amendment(options: AmendmentOptions & { ledger: false }): Envelope;
 export function create(type: RecordType, options: Record<string, unknown>): Envelope | Promise<Envelope>;
 export function folderLedger(folder: string): SeriesLedger;
 export function ledgerLatest(ledger: string | SeriesLedger, type: RecordType, seriesRef: string): Promise<Envelope | null>;

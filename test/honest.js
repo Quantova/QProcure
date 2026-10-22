@@ -21,8 +21,8 @@ async function honest() {
   const exclusion = await at(q.exclusion({ key: K.committee, notice, bid: bids[2], reason: 'missing tax certificate', excludedAt: iso(deadline + 3650) }), deadline + 3700);
   const scores = [];
   for (let i = 0; i < 2; i += 1) scores.push(await at(q.score({ key: K.evaluator, notice, opening: openings[i], score: String(80 - i * 20), scoredAt: iso(deadline + 4000 + i) }), deadline + 4100));
-  const award = await at(q.award({ key: K.awarder, notice, opening: openings[0], contractDocument: Buffer.from('contract'), currency: 'USD', awardedAt: iso(deadline + 4500) }), deadline + 4600);
-  const amendment = await at(q.amendment({ key: K.approver, award, approval: Buffer.from('approval'), value: '51000', first: true, amendedAt: iso(deadline + 5000) }), deadline + 5100);
+  const award = await at(q.award({ ledger: false, key: K.awarder, notice, opening: openings[0], contractDocument: Buffer.from('contract'), currency: 'USD', awardedAt: iso(deadline + 4500) }), deadline + 4600);
+  const amendment = await at(q.amendment({ ledger: false, key: K.approver, award, approval: Buffer.from('approval'), value: '51000', first: true, amendedAt: iso(deadline + 5000) }), deadline + 5100);
   net.chain.block(now);
   const roles = Object.fromEntries(Object.entries(K).map(([r, k]) => [r + 'Keys', [q.keyId(k)]]));
   roles.bidderKeys = bidders.map((k) => q.keyId(k));

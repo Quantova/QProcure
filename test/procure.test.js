@@ -26,7 +26,7 @@ async function tender() {
   const bid1Late = await at(bid1, deadline + 1800);
   const open2 = await at(q.opening({ key: K.committee, notice, bid: bid2A, bidDigest: s2.bidDigest, bidSalt: s2.salt, currency: 'USD', price: '90000', openedAt: iso(deadline + 3600) }), deadline + 3700);
   const score2 = await at(q.score({ key: K.evaluator, notice, opening: open2, score: '80', scoredAt: iso(deadline + 4000) }), deadline + 4100);
-  const award = await at(q.award({ key: K.awarder, notice, opening: open2, contractDocument: Buffer.from('contract'), currency: 'USD', awardedAt: iso(deadline + 4500) }), deadline + 4600);
+  const award = await at(q.award({ ledger: false, key: K.awarder, notice, opening: open2, contractDocument: Buffer.from('contract'), currency: 'USD', awardedAt: iso(deadline + 4500) }), deadline + 4600);
   const open1 = await at(q.opening({ key: K.committee, notice, bid: bid1Timely, bidDigest: s1.bidDigest, bidSalt: s1.salt, currency: 'USD', price: '50000', openedAt: iso(deadline + 3650) }), deadline + 3700);
   const score1 = await at(q.score({ key: K.evaluator, notice, opening: open1, score: '60', scoredAt: iso(deadline + 4050) }), deadline + 4100);
   net.chain.block(now);
