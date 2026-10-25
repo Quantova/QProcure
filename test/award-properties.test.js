@@ -66,7 +66,7 @@ async function tender(rng) {
   };
   const verify = (pool) => q.verify(award, Object.assign({ type: 'award', at: iso(now), allSupplied: true, records: pool }, roles, net.opts));
   const without = records.filter((r) => r !== bids[suppressed]);
-  return { int, verify, records, without, timely: bids[suppressed], bare: unanchored[suppressed], late, others: bids.filter((b, i) => i !== suppressed), deadline, excluded, n };
+  return { int, verify, records, without, timely: bids[suppressed], bare: unanchored[suppressed], late, others: bids.filter((b, i) => i !== suppressed), deadline, excluded, n, K, notice, at };
 }
 
 const ROUNDS = iterations(40);
@@ -120,4 +120,25 @@ test('a flood of receipts that claim earlier positions for a suppressed bid neve
     seen.push(count);
   }
   t.diagnostic('flood sizes ' + seen.join(', '));
+});
+
+test('an exclusion signed or anchored after the award never turns an award that left a bid unopened valid', async () => {
+  const rng = mulberry32(0xe7c1);
+  for (let round = 0; round < 6; round += 1) {
+    const tn = await tender(rng);
+    const pool = tn.without.concat([tn.timely]);
+    const unopened = await tn.verify(pool);
+    assert.strictEqual(unopened.status, 'invalid', failing(unopened).join('\n'));
+    const exclude = (when, anchoredAt) => tn.at(q.exclusion({ key: tn.K.committee, notice: tn.notice, bid: tn.timely, reason: 'incomplete', excludedAt: iso(when) }), anchoredAt);
+    const after = await exclude(tn.deadline + 6000, tn.deadline + 6100);
+    const r = await tn.verify(pool.concat([after]));
+    assert.strictEqual(r.status, 'invalid', 'an exclusion after the award verified ' + r.status + '\n' + failing(r).join('\n'));
+    assert.ok(r.checks.some((c) => c.name === 'exclusion timing' && !c.ok), failing(r).join('\n'));
+    const backdated = await exclude(tn.deadline + 3550, tn.deadline + 6100);
+    const rb = await tn.verify(pool.concat([backdated]));
+    assert.strictEqual(rb.status, 'invalid', 'an exclusion dated before the award but anchored after it verified ' + rb.status);
+    const before = await exclude(tn.deadline + 3550, tn.deadline + 3600);
+    const ok = await tn.verify(pool.concat([before]));
+    assert.strictEqual(ok.status, 'valid', failing(ok).join('\n'));
+  }
 });
